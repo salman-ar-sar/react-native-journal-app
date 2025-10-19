@@ -5,45 +5,40 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
 
 const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    height: 104,
-    flexDirection: 'row',
-    gap: 8,
-    alignItems: 'center',
+  containerShadow: {
     elevation: 2,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 2,
-    backgroundColor: '#fff',
-    padding: 12,
-    borderRadius: 8,
+    borderRadius: 12,
+    backgroundColor: '#F2F1F2',
+    borderColor: 'rgb(0,0,0,0.1)',
+    borderWidth: 0.5,
+  },
+  container: {
+    borderRadius: 12,
+    alignItems: 'center',
+    overflow: 'hidden',
   },
   image: {
-    width: 60,
-    height: 80,
-    borderRadius: 8,
-    borderWidth: 0.2,
-    borderColor: '#303030',
+    aspectRatio: 16 / 9,
+    width: '100%',
   },
   textContainer: {
-    height: '100%',
-    flex: 1,
+    width: '100%',
+    backgroundColor: '#fff',
+    gap: 4,
+    padding: 16,
+    alignItems: 'flex-start',
   },
-  detailsContainer: { flex: 1, justifyContent: 'center' },
   title: {
-    fontWeight: 500,
-    marginBottom: 4,
+    fontWeight: 700,
+    color: '#333333',
+    fontSize: 16,
   },
   desc: {
-    color: '#303030',
-    fontSize: 12,
-  },
-  date: {
-    color: 'gray',
-    fontSize: 10,
-    textAlign: 'right',
+    color: '#888888',
   },
 });
 
@@ -64,23 +59,29 @@ export default function JournalEntry({
 }: JournalEntryProps) {
   return (
     <TouchableOpacity
-      style={styles.container}
+      style={styles.containerShadow}
       activeOpacity={0.75}
       onPress={() => {
         console.log(id);
       }}
     >
-      <Image style={styles.image} source={{ uri: image }} />
-      <View style={styles.textContainer}>
-        <View style={styles.detailsContainer}>
+      <View style={styles.container}>
+        <Image
+          resizeMode="cover"
+          style={styles.image}
+          source={{ uri: image }}
+        />
+        <View style={styles.textContainer}>
           <Text style={styles.title}>{title}</Text>
-          <Text style={styles.desc}>{desc}</Text>
+          <Text style={styles.desc}>
+            {dayjs(date).isAfter(dayjs().subtract(7, 'day'))
+              ? dayjs(date).fromNow()
+              : dayjs(date).format('MMMM DD, YYYY')}
+          </Text>
+          <Text style={styles.desc} numberOfLines={2}>
+            {desc}
+          </Text>
         </View>
-        <Text style={styles.date}>
-          {dayjs(date).isAfter(dayjs().subtract(7, 'day'))
-            ? dayjs(date).fromNow()
-            : dayjs(date).format('DD MMM YYYY')}
-        </Text>
       </View>
     </TouchableOpacity>
   );
