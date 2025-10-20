@@ -1,5 +1,4 @@
 import { StyleSheet, FlatList, Text } from 'react-native';
-import RNFS from 'react-native-fs';
 import JournalEntry from '../components/JournalEntry';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import FloatingActionButton from '../components/FoatingActionButton';
@@ -40,9 +39,7 @@ export default function Home({ navigation }: RootStackScreenProps<'Home'>) {
         renderItem={({ item: entry }) => (
           <JournalEntry
             id={entry.id}
-            image={`${RNFS.DocumentDirectoryPath}/${entry.imagePath
-              .split('/')
-              .at(-1)}`}
+            image={`file://${entry.imagePath}`}
             title={entry.title}
             desc={entry.desc}
             date={entry.createdAt.toString()}
