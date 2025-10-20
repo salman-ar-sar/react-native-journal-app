@@ -1,5 +1,5 @@
-import { StyleSheet, FlatList, Text, View, Button } from 'react-native';
-import JournalEntry from '../../components/JournalEntry/JournalEntry';
+import { StyleSheet, FlatList, Text, Button } from 'react-native';
+import JournalEntry from '../components/JournalEntry/JournalEntry';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const mockJournalEntries = [
@@ -93,13 +93,13 @@ const styles = StyleSheet.create({
   listContainer: {
     width: '100%',
     padding: 16,
-    paddingTop: 0,
+    paddingTop: 8,
   },
   listContentContainer: { gap: 16, paddingBottom: 24 },
   header: {
     fontSize: 16,
     fontWeight: 700,
-    paddingBottom: 16,
+    paddingVertical: 16,
   },
 });
 

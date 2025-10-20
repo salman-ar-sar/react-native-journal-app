@@ -3,7 +3,7 @@ import {
   createNativeStackNavigator,
   type NativeStackScreenProps,
 } from '@react-navigation/native-stack';
-import Home from './screens/Home/Home';
+import Home from './screens/Home';
 import NewEntry from './screens/NewEntry';
 
 type RootStackParamList = {
