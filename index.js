@@ -3,6 +3,7 @@
  */
 
 import { AppRegistry } from 'react-native';
+import 'react-native-get-random-values';
 import dayjs from 'dayjs';
 import updateLocale from 'dayjs/plugin/updateLocale';
 import App from './App';

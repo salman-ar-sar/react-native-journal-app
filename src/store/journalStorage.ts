@@ -12,9 +12,7 @@ export interface JournalEntry {
   createdAt: number;
 }
 
-export const saveImageToAppStorage = async (
-  sourceUri: string,
-): Promise<string> => {
+const saveImageToAppStorage = async (sourceUri: string): Promise<string> => {
   try {
     const normalizedPath = sourceUri.replace('file://', '');
 

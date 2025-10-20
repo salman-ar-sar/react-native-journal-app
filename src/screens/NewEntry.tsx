@@ -21,6 +21,7 @@ import {
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { z } from 'zod';
+import { saveJournalEntry } from '../store/journalStorage';
 
 const NewEntrySchema = z.object({
   title: z.string().min(1),
@@ -41,8 +42,7 @@ export default function NewEntry() {
     resolver: zodResolver(NewEntrySchema),
   });
   const onSubmit = (data: NewEntryForm) => {
-    // TODO: API Call
-    console.log(data);
+    saveJournalEntry(data.title, data.description, data.image);
   };
 
   return (
