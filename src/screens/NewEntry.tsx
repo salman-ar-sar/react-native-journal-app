@@ -31,8 +31,10 @@ const NewEntrySchema = z.object({
 
 type NewEntryForm = z.infer<typeof NewEntrySchema>;
 
-export default function NewEntry() {
-  const { goBack } = useNavigation();
+export default function NewEntry({
+  navigation,
+}: RootStackScreenProps<'NewEntry'>) {
+  const { goBack } = navigation;
 
   const {
     control,
@@ -43,6 +45,7 @@ export default function NewEntry() {
   });
   const onSubmit = (data: NewEntryForm) => {
     saveJournalEntry(data.title, data.description, data.image);
+    goBack();
   };
 
   return (
