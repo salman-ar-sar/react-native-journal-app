@@ -77,15 +77,14 @@ export async function deleteJournalEntry(id: string): Promise<void> {
 
 export async function deleteAllJournals() {
   const entries = getAllJournalEntries();
-  const length = entries.length;
 
-  for (let i = 0; i < length; i++) {
-    const item = entries[i];
-
-    if (item?.imagePath && (await RNFS.exists(item.imagePath))) {
-      await RNFS.unlink(item.imagePath);
-    }
-  }
+  await Promise.allSettled(
+    entries.map(async item => {
+      if (item?.imagePath && (await RNFS.exists(item.imagePath))) {
+        await RNFS.unlink(item.imagePath);
+      }
+    }),
+  );
 
   storage.set(MMKV_JOURNAL_STORAGE_KEY, JSON.stringify([]));
 }
