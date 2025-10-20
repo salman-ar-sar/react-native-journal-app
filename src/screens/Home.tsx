@@ -1,6 +1,7 @@
-import { StyleSheet, FlatList, Text, Button } from 'react-native';
+import { StyleSheet, FlatList, Text } from 'react-native';
 import JournalEntry from '../components/JournalEntry';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import FloatingActionButton from '../components/FoatingActionButton';
 
 const mockJournalEntries = [
   {
@@ -124,11 +125,10 @@ export default function Home({ navigation }: RootStackScreenProps<'Home'>) {
         )}
         keyExtractor={({ id }) => id}
       />
-      <Button
+      <FloatingActionButton
         onPress={() => {
           navigate('NewEntry');
         }}
-        title="New Entry"
       />
     </SafeAreaView>
   );
