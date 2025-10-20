@@ -3,7 +3,7 @@ import { storage } from './mmkvStore';
 import { v4 as uuidv4 } from 'uuid';
 import dayjs, { Dayjs } from 'dayjs';
 
-const MMKV_JOURNAL_STORAGE_KEY = 'journals';
+export const MMKV_JOURNAL_STORAGE_KEY = 'journals';
 
 export interface JournalEntry {
   id: string;
@@ -16,8 +16,9 @@ export interface JournalEntry {
 const saveImageToAppStorage = async (sourceUri: string): Promise<string> => {
   try {
     const normalizedPath = sourceUri.replace('file://', '');
+    const ext = sourceUri.split('.').at(-1) ?? 'jpg';
 
-    const fileName = `journal_${Date.now()}.jpg`;
+    const fileName = `journal_${Date.now()}.${ext}`;
     const destPath = `${RNFS.DocumentDirectoryPath}/${fileName}`;
 
     await RNFS.copyFile(normalizedPath, destPath);
@@ -29,11 +30,11 @@ const saveImageToAppStorage = async (sourceUri: string): Promise<string> => {
   }
 };
 
-export const saveJournalEntry = async (
+export async function saveJournalEntry(
   title: string,
   desc: string,
   imageUri: string,
-): Promise<JournalEntry> => {
+): Promise<JournalEntry> {
   const imagePath = await saveImageToAppStorage(imageUri);
 
   const entry: JournalEntry = {
@@ -50,19 +51,19 @@ export const saveJournalEntry = async (
   storage.set(MMKV_JOURNAL_STORAGE_KEY, JSON.stringify(entries));
 
   return entry;
-};
+}
 
-export const getAllJournalEntries = (): JournalEntry[] => {
+export function getAllJournalEntries(): JournalEntry[] {
   const data = storage.getString(MMKV_JOURNAL_STORAGE_KEY);
   return data ? JSON.parse(data) : [];
-};
+}
 
-export const getJournalById = (id: string): JournalEntry | undefined => {
+export function getJournalById(id: string): JournalEntry | undefined {
   const entries = getAllJournalEntries();
   return entries.find(e => e.id === id);
-};
+}
 
-export const deleteJournalEntry = async (id: string): Promise<void> => {
+export async function deleteJournalEntry(id: string): Promise<void> {
   const entries = getAllJournalEntries();
   const updated = entries.filter(e => e.id !== id);
   const deleted = entries.find(e => e.id === id);
@@ -72,4 +73,19 @@ export const deleteJournalEntry = async (id: string): Promise<void> => {
   }
 
   storage.set(MMKV_JOURNAL_STORAGE_KEY, JSON.stringify(updated));
-};
+}
+
+export async function deleteAllJournals() {
+  const entries = getAllJournalEntries();
+  const length = entries.length;
+
+  for (let i = 0; i < length; i++) {
+    const item = entries[i];
+
+    if (item?.imagePath && (await RNFS.exists(item.imagePath))) {
+      await RNFS.unlink(item.imagePath);
+    }
+  }
+
+  storage.set(MMKV_JOURNAL_STORAGE_KEY, JSON.stringify([]));
+}
