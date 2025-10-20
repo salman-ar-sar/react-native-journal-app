@@ -1,5 +1,16 @@
-import React from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useNavigation } from '@react-navigation/native';
 import {
+  ArrowLeft,
+  BookImage,
+  Camera,
+  ImagePlus,
+  LocateFixed,
+} from 'lucide-react-native';
+import React from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import {
+  Image,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -9,17 +20,30 @@ import {
 } from 'react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import {
-  ArrowLeft,
-  BookImage,
-  Camera,
-  ImagePlus,
-  LocateFixed,
-} from 'lucide-react-native';
-import { useNavigation } from '@react-navigation/native';
+import { z } from 'zod';
+
+const NewEntrySchema = z.object({
+  title: z.string().min(1),
+  description: z.string().min(10),
+  image: z.string().min(1),
+});
+
+type NewEntryForm = z.infer<typeof NewEntrySchema>;
 
 export default function NewEntry() {
   const { goBack } = useNavigation();
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(NewEntrySchema),
+  });
+  const onSubmit = (data: NewEntryForm) => {
+    // TODO: API Call
+    console.log(data);
+  };
 
   return (
     <SafeAreaView style={styles.root}>
@@ -31,53 +55,98 @@ export default function NewEntry() {
       </View>
       <ScrollView>
         <View style={styles.container}>
-          <View style={styles.imagePlaceholder}>
-            <ImagePlus color={styles.image.color} size={36} />
-          </View>
-          <View style={styles.buttonContainer}>
-            <Pressable
-              onPress={async () => {
-                await launchCamera({ mediaType: 'photo' });
-              }}
-              style={[styles.button, styles.primaryButton]}
-            >
-              <Camera color={styles.primaryButton.color} />
-              <Text style={[styles.text, styles.primaryButtonText]}>
-                Take Photo
-              </Text>
-            </Pressable>
-            <Pressable
-              onPress={async () => {
-                await launchImageLibrary({ mediaType: 'photo' });
-              }}
-              style={[
-                styles.button,
-                styles.secondaryButton,
-                styles.chooseLibraryButton,
-              ]}
-            >
-              <BookImage color={styles.secondaryButton.color} />
-              <Text style={[styles.text, styles.secondaryButtonText]}>
-                Choose from library
-              </Text>
-            </Pressable>
-          </View>
+          <Controller
+            control={control}
+            name="image"
+            render={({ field }) => (
+              <>
+                <View style={styles.imageContainer}>
+                  {field.value ? (
+                    <Image source={{ uri: field.value }} style={styles.image} />
+                  ) : (
+                    <ImagePlus color={styles.imageIcon.color} size={36} />
+                  )}
+                </View>
+                <View style={styles.buttonContainer}>
+                  <Pressable
+                    onPress={async () => {
+                      const { assets } = await launchCamera({
+                        mediaType: 'photo',
+                      });
+
+                      if (assets?.length) field.onChange(assets[0].uri);
+                    }}
+                    style={[styles.button, styles.primaryButton]}
+                  >
+                    <Camera color={styles.primaryButton.color} />
+                    <Text style={[styles.text, styles.primaryButtonText]}>
+                      Take Photo
+                    </Text>
+                  </Pressable>
+                  <Pressable
+                    onPress={async () => {
+                      const { assets } = await launchImageLibrary({
+                        mediaType: 'photo',
+                      });
+
+                      if (assets?.length) field.onChange(assets[0].uri);
+                    }}
+                    style={[
+                      styles.button,
+                      styles.secondaryButton,
+                      styles.chooseLibraryButton,
+                    ]}
+                  >
+                    <BookImage color={styles.secondaryButton.color} />
+                    <Text style={[styles.text, styles.secondaryButtonText]}>
+                      Choose from library
+                    </Text>
+                  </Pressable>
+                </View>
+              </>
+            )}
+          />
+
           <View style={styles.formContainer}>
             <View style={styles.formInputContainer}>
               <Text style={styles.text}>Title</Text>
-              <TextInput
-                style={styles.textInput}
-                placeholder="Enter a title for your entry"
+              <Controller
+                control={control}
+                name="title"
+                render={({ field }) => (
+                  <TextInput
+                    style={styles.textInput}
+                    placeholder="Enter a title for your entry"
+                    value={field.value}
+                    onChangeText={field.onChange}
+                    onBlur={field.onBlur}
+                  />
+                )}
               />
+              {errors.title && (
+                <Text style={styles.errorText}>{errors.title.message}</Text>
+              )}
             </View>
             <View style={styles.formInputContainer}>
               <Text style={styles.text}>Notes</Text>
-              <TextInput
-                style={[styles.textInput, styles.textInputMultiline]}
-                placeholder="Write about your experience"
-                multiline
+              <Controller
+                control={control}
+                name="description"
+                render={({ field }) => (
+                  <TextInput
+                    style={[styles.textInput, styles.textInputMultiline]}
+                    placeholder="Write about your experience"
+                    value={field.value}
+                    onChangeText={field.onChange}
+                    onBlur={field.onBlur}
+                    multiline
+                  />
+                )}
               />
             </View>
+            {errors.description && (
+              <Text style={styles.errorText}>{errors.description.message}</Text>
+            )}
           </View>
           <Pressable
             onPress={() => {
@@ -96,7 +165,7 @@ export default function NewEntry() {
           </Pressable>
           <Pressable
             onPress={() => {
-              console.log('Submit');
+              handleSubmit(onSubmit)();
             }}
             style={[styles.button, styles.primaryButton, styles.submitButton]}
           >
@@ -134,16 +203,22 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginRight: 24, // to align with the back arrow
   },
-  imagePlaceholder: {
+  imageContainer: {
     width: '100%',
     height: 200,
     borderRadius: 8,
     backgroundColor: '#E2E8EF',
     justifyContent: 'center',
     alignItems: 'center',
+    overflow: 'hidden',
+  },
+  imageIcon: {
+    color: '#94A3B8',
   },
   image: {
-    color: '#94A3B8',
+    flex: 1,
+    height: '100%',
+    width: '100%',
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -207,5 +282,10 @@ const styles = StyleSheet.create({
     flex: 0,
     marginVertical: 16,
     height: 56,
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 16,
+    marginTop: 8,
   },
 });
