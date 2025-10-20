@@ -1,6 +1,7 @@
 import RNFS from 'react-native-fs';
 import { storage } from './mmkvStore';
 import { v4 as uuidv4 } from 'uuid';
+import dayjs, { Dayjs } from 'dayjs';
 
 const MMKV_JOURNAL_STORAGE_KEY = 'journals';
 
@@ -9,7 +10,7 @@ export interface JournalEntry {
   title: string;
   desc: string;
   imagePath: string;
-  createdAt: number;
+  createdAt: Dayjs;
 }
 
 const saveImageToAppStorage = async (sourceUri: string): Promise<string> => {
@@ -40,7 +41,7 @@ export const saveJournalEntry = async (
     title,
     desc,
     imagePath,
-    createdAt: Date.now(),
+    createdAt: dayjs(),
   };
 
   const existingData = storage.getString(MMKV_JOURNAL_STORAGE_KEY);
