@@ -31,7 +31,7 @@ export default function FloatingActionButton({ onPress }: Props) {
         onPressIn={animatePressedIn}
         onPressOut={animatePressedOut}
       >
-        <Plus color={styles().icon.color} />
+        <Plus color={styles().icon.color} size={28} />
       </Pressable>
     </Animated.View>
   );
@@ -40,8 +40,8 @@ export default function FloatingActionButton({ onPress }: Props) {
 const styles = (btnScale?: Animated.Value) =>
   StyleSheet.create({
     container: {
-      height: 40,
-      width: 40,
+      height: 56,
+      width: 56,
       borderRadius: '50%',
       backgroundColor: '#14A4EC',
 
@@ -57,8 +57,8 @@ const styles = (btnScale?: Animated.Value) =>
       shadowRadius: 3.5,
     },
     btnStyle: {
-      height: 40,
-      width: 40,
+      height: 56,
+      width: 56,
       justifyContent: 'center',
       alignItems: 'center',
     },
