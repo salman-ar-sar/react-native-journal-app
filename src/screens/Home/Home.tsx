@@ -1,4 +1,4 @@
-import { Text, View, StyleSheet } from 'react-native';
+import { Text, View, StyleSheet, Button } from 'react-native';
 
 const styles = StyleSheet.create({
   container: {
@@ -11,10 +11,18 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function Home() {
+export default function Home({ navigation }: RootStackScreenProps<'Home'>) {
+  const { navigate } = navigation;
+
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Welcome to Home Screen</Text>
+      <Button
+        onPress={() => {
+          navigate('NewEntry');
+        }}
+        title="New Entry"
+      />
     </View>
   );
 }

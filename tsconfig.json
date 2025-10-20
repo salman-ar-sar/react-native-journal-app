@@ -7,6 +7,7 @@
     "node_modules/react-native/types_generated"
   ],
   "compilerOptions": {
-    "customConditions": ["react-native-strict-api"]
+    "customConditions": ["react-native-strict-api"],
+    "strict": true
   }
 }
