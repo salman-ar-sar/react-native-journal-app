@@ -1,4 +1,3 @@
-import { useNavigation } from '@react-navigation/native';
 import { Text, View, StyleSheet, Button } from 'react-native';
 
 const styles = StyleSheet.create({
@@ -12,8 +11,8 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function Home() {
-  const { navigate } = useNavigation();
+export default function Home({ navigation }: RootStackScreenProps<'Home'>) {
+  const { navigate } = navigation;
 
   return (
     <View style={styles.container}>

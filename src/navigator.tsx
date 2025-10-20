@@ -1,5 +1,8 @@
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {
+  createNativeStackNavigator,
+  type NativeStackScreenProps,
+} from '@react-navigation/native-stack';
 import Home from './screens/Home/Home';
 import NewEntry from './screens/NewEntry';
 
@@ -30,4 +33,7 @@ declare global {
   namespace ReactNavigation {
     interface RootParamList extends RootStackParamList {}
   }
+
+  interface RootStackScreenProps<Screen extends keyof RootStackParamList>
+    extends NativeStackScreenProps<RootStackParamList, Screen> {}
 }
