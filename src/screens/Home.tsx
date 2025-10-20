@@ -1,5 +1,5 @@
 import { StyleSheet, FlatList, Text, Button } from 'react-native';
-import JournalEntry from '../components/JournalEntry/JournalEntry';
+import JournalEntry from '../components/JournalEntry';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const mockJournalEntries = [
