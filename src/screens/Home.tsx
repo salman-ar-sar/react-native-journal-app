@@ -2,7 +2,12 @@ import { StyleSheet, FlatList, Text } from 'react-native';
 import JournalEntry from '../components/JournalEntry';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import FloatingActionButton from '../components/FoatingActionButton';
-import { useMMKVStorage } from '../hooks/useJournalsStorage';
+import { useMMKVObject } from 'react-native-mmkv';
+import {
+  type JournalEntry as JournalEntryType,
+  MMKV_JOURNAL_STORAGE_KEY,
+} from '../store/journalStorage';
+import { storage } from '../store/mmkvStore';
 
 const styles = StyleSheet.create({
   container: {
@@ -27,7 +32,10 @@ const styles = StyleSheet.create({
 
 export default function Home({ navigation }: RootStackScreenProps<'Home'>) {
   const { navigate } = navigation;
-  const { journals } = useMMKVStorage();
+  const [journals] = useMMKVObject<JournalEntryType[]>(
+    MMKV_JOURNAL_STORAGE_KEY,
+    storage,
+  );
 
   return (
     <SafeAreaView style={styles.container}>
