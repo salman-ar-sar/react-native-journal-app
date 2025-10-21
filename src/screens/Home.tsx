@@ -2,86 +2,12 @@ import { StyleSheet, FlatList, Text } from 'react-native';
 import JournalEntry from '../components/JournalEntry';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import FloatingActionButton from '../components/FoatingActionButton';
-
-const mockJournalEntries = [
-  {
-    id: '1',
-    title: 'Paris Trip',
-    note: 'The Detail Screen has been switched to dark mode, ensuring that the large photo, title, date, full note, and map section are all presented clearly within a darker interface.',
-    date: '2025-10-12',
-    image: 'https://picsum.photos/1920/1080?random=1',
-  },
-  {
-    id: '2',
-    title: 'Beach Day',
-    note: 'Water was crystal clear.',
-    date: '2025-10-12',
-    image: 'https://picsum.photos/1920/1080?random=2',
-  },
-  {
-    id: '3',
-    title: 'Beach Day',
-    note: 'Water was crystal clear.',
-    date: '2025-10-12',
-    image: 'https://picsum.photos/1920/1080?random=3',
-  },
-  {
-    id: '4',
-    title: 'Beach Day',
-    note: 'Water was crystal clear.',
-    date: '2025-10-12',
-    image: 'https://picsum.photos/1920/1080?random=4',
-  },
-  {
-    id: '5',
-    title: 'Beach Day',
-    note: 'Water was crystal clear.',
-    date: '2025-10-12',
-    image: 'https://picsum.photos/1920/1080?random=5',
-  },
-  {
-    id: '6',
-    title: 'Beach Day',
-    note: 'Water was crystal clear.',
-    date: '2025-10-12',
-    image: 'https://picsum.photos/1920/1080?random=6',
-  },
-  {
-    id: '7',
-    title: 'Beach Day',
-    note: 'Water was crystal clear.',
-    date: '2025-10-18',
-    image: 'https://picsum.photos/1920/1080?random=7',
-  },
-  {
-    id: '8',
-    title: 'Beach Day',
-    note: 'Water was crystal clear.',
-    date: '2025-10-12',
-    image: 'https://picsum.photos/1920/1080?random=8',
-  },
-  {
-    id: '9',
-    title: 'Beach Day',
-    note: 'Water was crystal clear.',
-    date: '2025-10-12',
-    image: 'https://picsum.photos/1920/1080?random=9',
-  },
-  {
-    id: '10',
-    title: 'Beach Day',
-    note: 'Water was crystal clear.',
-    date: '2025-10-12',
-    image: 'https://picsum.photos/1920/1080?random=10',
-  },
-  {
-    id: '11',
-    title: 'Beach Day - 11',
-    note: 'Water was crystal clear.',
-    date: '2025-10-12',
-    image: 'https://picsum.photos/1920/1080?random=11',
-  },
-];
+import { useMMKVObject } from 'react-native-mmkv';
+import {
+  type JournalEntry as JournalEntryType,
+  MMKV_JOURNAL_STORAGE_KEY,
+} from '../store/journalStorage';
+import { storage } from '../store/mmkvStore';
 
 const styles = StyleSheet.create({
   container: {
@@ -106,21 +32,25 @@ const styles = StyleSheet.create({
 
 export default function Home({ navigation }: RootStackScreenProps<'Home'>) {
   const { navigate } = navigation;
+  const [journals] = useMMKVObject<JournalEntryType[]>(
+    MMKV_JOURNAL_STORAGE_KEY,
+    storage,
+  );
 
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.header}>My Journeys</Text>
       <FlatList
-        data={mockJournalEntries}
+        data={journals}
         style={styles.listContainer}
         contentContainerStyle={styles.listContentContainer}
         renderItem={({ item: entry }) => (
           <JournalEntry
             id={entry.id}
-            image={entry.image}
+            image={`file://${entry.imagePath}`}
             title={entry.title}
-            desc={entry.note}
-            date={entry.date}
+            desc={entry.desc}
+            date={entry.createdAt.toString()}
           />
         )}
         keyExtractor={({ id }) => id}

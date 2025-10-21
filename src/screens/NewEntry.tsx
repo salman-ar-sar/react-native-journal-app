@@ -7,9 +7,10 @@ import {
   ImagePlus,
   LocateFixed,
 } from 'lucide-react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import {
+  ActivityIndicator,
   Image,
   Pressable,
   ScrollView,
@@ -21,6 +22,7 @@ import {
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { z } from 'zod';
+import { saveJournalEntry } from '../store/journalStorage';
 
 const NewEntrySchema = z.object({
   title: z.string().min(1),
@@ -30,8 +32,11 @@ const NewEntrySchema = z.object({
 
 type NewEntryForm = z.infer<typeof NewEntrySchema>;
 
-export default function NewEntry() {
-  const { goBack } = useNavigation();
+export default function NewEntry({
+  navigation,
+}: RootStackScreenProps<'NewEntry'>) {
+  const { goBack } = navigation;
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     control,
@@ -40,9 +45,17 @@ export default function NewEntry() {
   } = useForm({
     resolver: zodResolver(NewEntrySchema),
   });
-  const onSubmit = (data: NewEntryForm) => {
-    // TODO: API Call
-    console.log(data);
+
+  const onSubmit = async (data: NewEntryForm) => {
+    setIsLoading(true);
+    try {
+      await saveJournalEntry(data.title, data.description, data.image);
+      goBack();
+    } catch (err) {
+      console.error('Failed to save:', err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -164,14 +177,19 @@ export default function NewEntry() {
             </Text>
           </Pressable>
           <Pressable
+            disabled={isLoading}
             onPress={() => {
               handleSubmit(onSubmit)();
             }}
             style={[styles.button, styles.primaryButton, styles.submitButton]}
           >
-            <Text style={[styles.text, styles.primaryButtonText]}>
-              Save Entry
-            </Text>
+            {isLoading ? (
+              <ActivityIndicator color={styles.activityIndicator.color} />
+            ) : (
+              <Text style={[styles.text, styles.primaryButtonText]}>
+                Save Entry
+              </Text>
+            )}
           </Pressable>
         </View>
       </ScrollView>
@@ -287,5 +305,8 @@ const styles = StyleSheet.create({
     color: 'red',
     fontSize: 16,
     marginTop: 8,
+  },
+  activityIndicator: {
+    color: '#fff',
   },
 });
