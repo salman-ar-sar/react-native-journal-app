@@ -43,27 +43,25 @@ const styles = StyleSheet.create({
 });
 
 type JournalEntryProps = {
-  id: string;
   image: string;
   title: string;
   date: string;
   desc: string;
+  onPress: () => void;
 };
 
 export default function JournalEntry({
-  id,
   image,
   title,
   date,
   desc,
+  onPress,
 }: JournalEntryProps) {
   return (
     <TouchableOpacity
       style={styles.containerShadow}
       activeOpacity={0.75}
-      onPress={() => {
-        console.log(id);
-      }}
+      onPress={onPress}
     >
       <View style={styles.container}>
         <Image
