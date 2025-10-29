@@ -46,11 +46,11 @@ export default function Home({ navigation }: RootStackScreenProps<'Home'>) {
         contentContainerStyle={styles.listContentContainer}
         renderItem={({ item: entry }) => (
           <JournalEntry
-            id={entry.id}
             image={`file://${entry.imagePath}`}
             title={entry.title}
             desc={entry.desc}
             date={entry.createdAt.toString()}
+            onPress={() => navigate('JournalEntryView', { entry })}
           />
         )}
         keyExtractor={({ id }) => id}
